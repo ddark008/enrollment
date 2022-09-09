@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
@@ -13,6 +14,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class DeleteApiDelegateImplTest {
 
     private final String VALIDATION_FALED = """
@@ -136,7 +138,7 @@ class DeleteApiDelegateImplTest {
     @Test
     public void notFound() throws Exception {
         this.mockMvc.perform(
-                MockMvcRequestBuilders.delete("/delete/элемент_1_2?date=2022-05-28T21:12:01.516Z")
+                MockMvcRequestBuilders.delete("/delete/test?date=2022-05-28T21:12:01.516Z")
         ).andExpect(status().isNotFound()).andExpect(content().json(NOT_FOUND));
     }
 }
