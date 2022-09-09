@@ -40,7 +40,7 @@ public class Item {
      * Ссылка на файл. Для папок поле равнно null.
      */
     @Column(name = "url", columnDefinition = "varying(256)")
-    private String name;
+    private String url;
 
     /**
      * id родительской папки
