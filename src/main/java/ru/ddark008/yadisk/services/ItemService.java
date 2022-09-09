@@ -7,4 +7,8 @@ import java.util.List;
 
 public interface ItemService {
     void importItems(List<Item> importItems);
+
+    void removeItem(String id);
+
+    Item findByIdItem(String id);
 }

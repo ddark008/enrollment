@@ -186,4 +186,17 @@ public class ItemServiceImpl implements ItemService {
             notVisitedList.remove(item);
         }
     }
+
+    @Override
+    @Transactional
+    public void removeItem(String id) {
+        Item unit = findByIdItem(id);
+        itemRepository.delete(unit);
+    }
+
+    @Override
+    @Transactional
+    public Item findByIdItem(String id) {
+        return itemRepository.findByItemStringId(id).orElseThrow(() -> new ItemNotFoundException(id));
+    }
 }
