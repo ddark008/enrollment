@@ -306,4 +306,141 @@ class ImportsApiDelegateImplTest {
         ).andExpect(status().isBadRequest()).andExpect(content().json(VALIDATION_FALED));
     }
 
+    @Test
+    public void replaceParent() throws Exception {
+        this.mockMvc.perform(
+                MockMvcRequestBuilders.post("/imports")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                  {
+                                  "items": [
+                                    {
+                                      "id": "элемент_1_1",
+                                      "type": "FILE",
+                                      "url": "aliqua et temp",
+                                      "parentId": "элемент_1_2",
+                                      "size": 93490855
+                                    },
+                                    {
+                                      "id": "элемент_1_2",
+                                      "type": "FOLDER",
+                                      "url": null,
+                                      "parentId": null,
+                                      "size": null
+                                    },
+                                    {
+                                      "id": "элемент_1_3",
+                                      "type": "FOLDER",
+                                      "url": null,
+                                      "parentId": null,
+                                      "size": null
+                                    }
+                                  ],
+                                  "updateDate": "2022-05-28T21:12:01Z"
+                                }
+                                                                """)
+        ).andExpect(status().isOk());
+        this.mockMvc.perform(
+                MockMvcRequestBuilders.post("/imports")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                  {
+                                  "items": [
+                                    {
+                                      "id": "элемент_1_1",
+                                      "type": "FILE",
+                                      "url": "aliqua et temp",
+                                      "parentId": "элемент_1_3",
+                                      "size": 5
+                                    }
+                                  ],
+                                  "updateDate": "2023-05-28T21:13:01Z"
+                                }
+                                                                """)
+        ).andExpect(status().isOk());
+        System.out.println();
+    }
+
+    @Test
+    public void sizeParent() throws Exception {
+        this.mockMvc.perform(
+                MockMvcRequestBuilders.post("/imports")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                  {
+                                  "items": [
+                                    {
+                                      "id": "элемент_1",
+                                      "type": "FOLDER",
+                                      "url": null,
+                                      "parentId": null,
+                                      "size": null
+                                    },
+                                    {
+                                      "id": "элемент_1_1",
+                                      "type": "FILE",
+                                      "url": "aliqua et temp",
+                                      "parentId": "элемент_1",
+                                      "size": 1
+                                    },
+                                    {
+                                      "id": "элемент_1_2",
+                                      "type": "FILE",
+                                      "url": "aliqua et temp",
+                                      "parentId": "элемент_1",
+                                      "size": 2
+                                    },
+                                    {
+                                      "id": "элемент_1_3",
+                                      "type": "FOLDER",
+                                      "url": null,
+                                      "parentId": "элемент_1",
+                                      "size": null
+                                    },
+                                    {
+                                      "id": "элемент_1_3_1",
+                                      "type": "FILE",
+                                      "url": "aliqua et temp",
+                                      "parentId": "элемент_1_3",
+                                      "size": 3
+                                    },
+                                    {
+                                      "id": "элемент_1_3_2",
+                                      "type": "FILE",
+                                      "url": "aliqua et temp",
+                                      "parentId": "элемент_1_3",
+                                      "size": 4
+                                    },
+                                    {
+                                      "id": "элемент_1_4",
+                                      "type": "FOLDER",
+                                      "url": null,
+                                      "parentId": "элемент_1",
+                                      "size": null
+                                    }
+                                  ],
+                                  "updateDate": "2022-05-28T21:12:01Z"
+                                }
+                                                                """)
+        ).andExpect(status().isOk());
+        this.mockMvc.perform(
+                MockMvcRequestBuilders.post("/imports")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                  {
+                                  "items": [
+                                    {
+                                      "id": "элемент_1_3_2",
+                                      "type": "FILE",
+                                      "url": "aliqua et temp",
+                                      "parentId": "элемент_1_4",
+                                      "size": 4
+                                    }
+                                  ],
+                                  "updateDate": "2023-05-28T21:13:01Z"
+                                }
+                                                                """)
+        ).andExpect(status().isOk());
+        System.out.println();
+    }
 }

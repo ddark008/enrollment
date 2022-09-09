@@ -9,13 +9,13 @@ import java.util.Map;
 
 @Component
 public class ItemImportValidator {
-    public void validate(Map<String, Item> importMap, Map<String, Item> parentMap, Map<String, Item> patchMap) {
+    public void validate(Map<String, Item> importMap, Map<String, Item> parentMap, Map<String, Item> updateMap) {
         for (Item importItem : importMap.values()) {
             // Проверка, что не изменяет тип
-            Item patchItem = patchMap.get(importItem.getItemStringId());
-            if (patchItem != null) {
-                if (patchItem.getType() != importItem.getType()) {
-                    throw new ItemValidationException(patchItem.getItemStringId(), "Type can't change!");
+            Item updateItem = updateMap.get(importItem.getItemStringId());
+            if (updateItem != null) {
+                if (updateItem.getType() != importItem.getType()) {
+                    throw new ItemValidationException(updateItem.getItemStringId(), "Type can't change!");
                 }
             }
             // Проверка, что родителем элемента может быть только папка
