@@ -78,6 +78,14 @@ public class Item {
     }
 
     /**
+     * Помещает data в БД со смещением UTC, так как Hibernate 5 не умеет сохранять часовой пояс в БД
+     * @param date
+     */
+    public void setDate(OffsetDateTime date) {
+        this.date = date.withOffsetSameInstant(ZoneOffset.UTC);
+    }
+
+    /**
      * ID элемента родителя из БД
      */
     @Transient
