@@ -10,7 +10,6 @@ import java.time.OffsetDateTime;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
-import java.util.UUID;
 
 @Entity
 @Table(name = "filesystem",
@@ -39,7 +38,7 @@ public class Item {
     /**
      * Ссылка на файл. Для папок поле равнно null.
      */
-    @Column(name = "url", columnDefinition = "varying(256)")
+    @Column(name = "url")
     private String url;
 
     /**
