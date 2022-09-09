@@ -52,6 +52,12 @@ public class ItemMapperImpl implements ItemMapper {
 
     @Override
     public SystemItemHistoryUnit toSystemItemHistoryUnit(Item entity) {
-        return null;
+        return new SystemItemHistoryUnit()
+                .id(entity.getItemStringId())
+                .url(entity.getUrl())
+                .date(entity.getDate())
+                .parentId(entity.getParentStringId())
+                .size(entity.getSize())
+                .type(entity.getType());
     }
 }

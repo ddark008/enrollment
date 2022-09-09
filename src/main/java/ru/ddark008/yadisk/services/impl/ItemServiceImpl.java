@@ -14,6 +14,7 @@ import ru.ddark008.yadisk.services.ItemService;
 import ru.ddark008.yadisk.validation.ItemImportValidator;
 
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.*;
 
 @Slf4j
@@ -198,8 +199,18 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public Item findByIdItem(String id) {
         return itemRepository.findByItemStringId(id).orElseThrow(() -> new ItemNotFoundException(id));
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Item> findFilesByDayAgo(OffsetDateTime date) {
+        OffsetDateTime endDate = date.withOffsetSameInstant(ZoneOffset.UTC);
+        OffsetDateTime startDate = endDate.minusHours(24);
+        return itemRepository.findByDateBetweenAndType(startDate, endDate, SystemItemType.FILE);
+    }
+
+
 }
