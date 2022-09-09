@@ -190,8 +190,11 @@ public class ItemServiceImpl implements ItemService {
     @Override
     @Transactional
     public void removeItem(String id) {
-        Item unit = findByIdItem(id);
-        itemRepository.delete(unit);
+        if (itemRepository.existsByItemStringId(id)) {
+            itemRepository.deleteByItemStringId(id);
+        } else {
+            throw new ItemNotFoundException(id);
+        }
     }
 
     @Override
