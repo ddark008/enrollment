@@ -6,8 +6,7 @@ import ru.ddark008.yadisk.model.SystemItemType;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -67,23 +66,7 @@ public class Item {
      */
     @Column(name = "DATE", nullable = false)
     @NotNull
-    private OffsetDateTime date;
-
-    /**
-     * Возвращает date со смещением UTC, так как Hibernate 5 не умеет сохранять часовой пояс в БД
-     * @return
-     */
-    public OffsetDateTime getDate() {
-        return date.withOffsetSameInstant(ZoneOffset.UTC);
-    }
-
-    /**
-     * Помещает data в БД со смещением UTC, так как Hibernate 5 не умеет сохранять часовой пояс в БД
-     * @param date
-     */
-    public void setDate(OffsetDateTime date) {
-        this.date = date.withOffsetSameInstant(ZoneOffset.UTC);
-    }
+    private LocalDateTime date;
 
     /**
      * ID элемента родителя из БД

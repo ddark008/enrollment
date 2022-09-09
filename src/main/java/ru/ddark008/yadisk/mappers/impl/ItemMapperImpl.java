@@ -8,6 +8,7 @@ import ru.ddark008.yadisk.model.SystemItemHistoryUnit;
 import ru.ddark008.yadisk.model.SystemItemImport;
 
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -23,7 +24,7 @@ public class ItemMapperImpl implements ItemMapper {
                 .parentStringId(dto.getParentId().orElse(null))
                 .type(dto.getType())
                 .size(dto.getSize().orElse(null))
-                .date(date)
+                .date(date.withOffsetSameInstant(ZoneOffset.UTC).toLocalDateTime())
                 .build();
     }
 
@@ -32,14 +33,14 @@ public class ItemMapperImpl implements ItemMapper {
         SystemItem systemItem = new SystemItem()
                 .id(entity.getItemStringId())
                 .url(entity.getUrl())
-                .date(entity.getDate())
+                .date(entity.getDate().atOffset(ZoneOffset.UTC))
                 .parentId(entity.getParentStringId())
                 .type(entity.getType())
                 .size(entity.getSize());
         // Рекурсивное добавление потомков
         Set<Item> childrenItem = entity.getChildren();
-        if (childrenItem == null || childrenItem.size() == 0){
-            switch (entity.getType()){
+        if (childrenItem == null || childrenItem.size() == 0) {
+            switch (entity.getType()) {
                 case FILE -> systemItem.setChildren(null);
                 case FOLDER -> systemItem.setChildren(new ArrayList<>());
             }
@@ -55,7 +56,7 @@ public class ItemMapperImpl implements ItemMapper {
         return new SystemItemHistoryUnit()
                 .id(entity.getItemStringId())
                 .url(entity.getUrl())
-                .date(entity.getDate())
+                .date(entity.getDate().atOffset(ZoneOffset.UTC))
                 .parentId(entity.getParentStringId())
                 .size(entity.getSize())
                 .type(entity.getType());

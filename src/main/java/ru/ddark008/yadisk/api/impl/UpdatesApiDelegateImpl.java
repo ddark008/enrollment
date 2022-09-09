@@ -12,7 +12,9 @@ import ru.ddark008.yadisk.model.SystemItemHistoryResponse;
 import ru.ddark008.yadisk.model.SystemItemHistoryUnit;
 import ru.ddark008.yadisk.services.ItemService;
 
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,7 +33,10 @@ public class UpdatesApiDelegateImpl implements UpdatesApiDelegate {
     @Override
     public ResponseEntity<SystemItemHistoryResponse> updatesGet(OffsetDateTime date) {
         log.info("Get list of files for 24 hours ago from {}:", date);
-        List<Item> itemList = itemService.findFilesByDayAgo(date);
+        LocalDateTime localDateTime = date.withOffsetSameInstant(ZoneOffset.UTC).toLocalDateTime();
+        // Запрос в БД списка в дипазоне [localDateTime-24h; localDateTime]
+        List<Item> itemList = itemService.findFilesByDayAgo(localDateTime);
+        // Преобразование в SystemItemHistoryUnit и вывод в логи
         List<SystemItemHistoryUnit> systemItemHistoryUnitList = itemList.stream()
                 .peek(item -> log.info("Id: {}, date: {}", item.getItemStringId(), item.getDate()))
                 .map(itemMapper::toSystemItemHistoryUnit)

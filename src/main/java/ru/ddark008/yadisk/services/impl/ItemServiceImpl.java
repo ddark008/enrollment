@@ -13,8 +13,7 @@ import ru.ddark008.yadisk.repositories.ItemRepository;
 import ru.ddark008.yadisk.services.ItemService;
 import ru.ddark008.yadisk.validation.ItemImportValidator;
 
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Slf4j
@@ -35,7 +34,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public void importItems(List<Item> importItems) {
-        if (importItems.isEmpty()){
+        if (importItems.isEmpty()) {
             return;
         }
         /*
@@ -55,15 +54,15 @@ public class ItemServiceImpl implements ItemService {
          */
         Set<Item> newItems = new HashSet<>();
 
-        for (Item item: importItems) {
+        for (Item item : importItems) {
             // Проверка на уникальность ID в запросе
             Item oldItem = importMap.put(item.getItemStringId(), item);
-            if (oldItem != null){
+            if (oldItem != null) {
                 throw new ItemValidationException(item.getItemStringId(), "Duplicate ID in request!");
             }
             // Коллекционирование родителей
             String parentID = item.getParentStringId();
-            if (parentID != null){
+            if (parentID != null) {
                 itemRepository.findByItemStringId(parentID).ifPresent(parentItem -> parentMap.put(parentID, parentItem));
             }
             // Сортировка на новые и обновленные
@@ -79,12 +78,12 @@ public class ItemServiceImpl implements ItemService {
         Set<Item> sizeRecalculate = new HashSet<>();
 
         // Добавляем новые элементы в дочерние элементы, а его родителей в список на пересчет размера
-        for (Item newItem: newItems) {
+        for (Item newItem : newItems) {
             addToParent(newItem);
             addParentsToSet(newItem, sizeRecalculate);
         }
         // Обновляем изменившиеся элементы
-        for (Item updateItem: updateMap.values()) {
+        for (Item updateItem : updateMap.values()) {
             Item patchItem = importMap.get(updateItem.getItemStringId());
             // Если поменяли родителя
             if (!(updateItem.getParentStringId() == null && patchItem.getParentStringId() == null) && !updateItem.getParentStringId().equals(patchItem.getParentStringId())) {
@@ -96,21 +95,21 @@ public class ItemServiceImpl implements ItemService {
                 // Добавление в дочерние элементы и родителей на пересчет размера
                 addToParent(updateItem);
                 addParentsToSet(updateItem, sizeRecalculate);
-            // Если изменился размер, но элемент не перенесли в другую папку
-            } else if (updateItem.getType() == SystemItemType.FILE && !updateItem.getSize().equals(patchItem.getSize())){
+                // Если изменился размер, но элемент не перенесли в другую папку
+            } else if (updateItem.getType() == SystemItemType.FILE && !updateItem.getSize().equals(patchItem.getSize())) {
                 itemPatcher.apply(updateItem, patchItem);
                 addParentsToSet(updateItem, sizeRecalculate);
-            // Если изменилось остальное, то просто применяем изменения
+                // Если изменилось остальное, то просто применяем изменения
             } else {
                 itemPatcher.apply(updateItem, patchItem);
             }
         }
 
         // В начале метода проверка, что список не пустой
-        OffsetDateTime date = importItems.get(0).getDate();
+        LocalDateTime date = importItems.get(0).getDate();
         // Список ещё не обработанных папок
         Set<Item> notVisitedList = new HashSet<>(sizeRecalculate);
-        for (Item item: sizeRecalculate){
+        for (Item item : sizeRecalculate) {
             calculateSize(item, date, notVisitedList);
         }
         itemRepository.saveAll(sizeRecalculate);
@@ -118,13 +117,14 @@ public class ItemServiceImpl implements ItemService {
 
     /**
      * Добавление элемента в родительскую папку
+     *
      * @param item элемент для добавления
      */
     @Transactional
-    private void addToParent(Item item){
-        if (item.getParentStringId() != null){
+    private void addToParent(Item item) {
+        if (item.getParentStringId() != null) {
             Item parent = itemRepository.findByItemStringId(item.getParentStringId()).orElse(null);
-            if (parent !=null){
+            if (parent != null) {
                 parent.getChildren().add(item);
                 item.setParent(parent);
             } else {
@@ -135,11 +135,12 @@ public class ItemServiceImpl implements ItemService {
 
     /**
      * Удаляет элемент из списка дочерних элементов родителя
+     *
      * @param item элемент для удаления
      */
     @Transactional
-    private void removeFromParent(Item item){
-        if (item.getParent() != null){
+    private void removeFromParent(Item item) {
+        if (item.getParent() != null) {
             item.getParent().getChildren().remove(item);
             item.setParent(null);
         }
@@ -147,32 +148,33 @@ public class ItemServiceImpl implements ItemService {
 
     /**
      * Рекурсивное добавление родителей элемента в список
+     *
      * @param item элемент для получения родителей
-     * @param set список родителей
+     * @param set  список родителей
      */
     @Transactional
-    private void addParentsToSet(Item item, Set<Item> set){
+    private void addParentsToSet(Item item, Set<Item> set) {
         Item parent = item.getParent();
-        if (parent != null){
+        if (parent != null) {
             // Если элемент уже в списке, то его родители точно там
-            if(set.add(parent)){
+            if (set.add(parent)) {
                 addParentsToSet(parent, set);
             }
         }
     }
 
     @Transactional
-    private void calculateSize(Item item , OffsetDateTime date, Set<Item> notVisitedList) {
-        if (item != null){
+    private void calculateSize(Item item, LocalDateTime date, Set<Item> notVisitedList) {
+        if (item != null) {
             // Если файл или уже обработан, то ничего не делаем
             if (item.getType() == SystemItemType.FILE || !notVisitedList.contains(item)) return;
 
             Set<Item> children = item.getChildren();
             long size = 0L;
-            if (children.size() > 0){
-                for (Item child: children) {
+            if (children.size() > 0) {
+                for (Item child : children) {
                     // Если ребенок изменен, но не перерасчитан - запускаем расчет для него
-                    if (notVisitedList.contains(child)){
+                    if (notVisitedList.contains(child)) {
                         calculateSize(child, date, notVisitedList);
                     }
                     Long child_size = child.getSize();
@@ -206,9 +208,8 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Item> findFilesByDayAgo(OffsetDateTime date) {
-        OffsetDateTime endDate = date.withOffsetSameInstant(ZoneOffset.UTC);
-        OffsetDateTime startDate = endDate.minusHours(24);
+    public List<Item> findFilesByDayAgo(LocalDateTime endDate) {
+        LocalDateTime startDate = endDate.minusHours(24);
         return itemRepository.findByDateBetweenAndType(startDate, endDate, SystemItemType.FILE);
     }
 
