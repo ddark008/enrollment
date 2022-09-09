@@ -4,11 +4,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.ddark008.yadisk.entities.HistoryItem;
 import ru.ddark008.yadisk.entities.Item;
 import ru.ddark008.yadisk.entities.patch.ItemPatcher;
 import ru.ddark008.yadisk.exceptions.ItemNotFoundException;
 import ru.ddark008.yadisk.exceptions.ItemValidationException;
+import ru.ddark008.yadisk.mappers.HistoryItemMapper;
 import ru.ddark008.yadisk.model.SystemItemType;
+import ru.ddark008.yadisk.repositories.HistoryItemRepository;
 import ru.ddark008.yadisk.repositories.ItemRepository;
 import ru.ddark008.yadisk.services.ItemService;
 import ru.ddark008.yadisk.validation.ItemImportValidator;
@@ -21,14 +24,20 @@ import java.util.*;
 public class ItemServiceImpl implements ItemService {
 
     private final ItemRepository itemRepository;
+
+    private final HistoryItemRepository historyItemRepository;
     private final ItemImportValidator itemImportValidator;
     private final ItemPatcher itemPatcher;
+    private final HistoryItemMapper historyItemMapper;
+
 
     @Autowired
-    public ItemServiceImpl(ItemRepository itemRepository, ItemImportValidator itemImportValidator, ItemPatcher itemPatcher) {
+    public ItemServiceImpl(ItemRepository itemRepository, HistoryItemRepository historyItemRepository, ItemImportValidator itemImportValidator, ItemPatcher itemPatcher, HistoryItemMapper historyItemMapper) {
         this.itemRepository = itemRepository;
+        this.historyItemRepository = historyItemRepository;
         this.itemImportValidator = itemImportValidator;
         this.itemPatcher = itemPatcher;
+        this.historyItemMapper = historyItemMapper;
     }
 
 
@@ -113,6 +122,12 @@ public class ItemServiceImpl implements ItemService {
             calculateSize(item, date, notVisitedList);
         }
         itemRepository.saveAll(sizeRecalculate);
+
+        Set<Item> changedItems = new HashSet<>();
+        changedItems.addAll(newItems);
+        changedItems.addAll(updateMap.values());
+        changedItems.addAll(sizeRecalculate);
+        changedItems.stream().map(historyItemMapper::toEntity).forEach(historyItemRepository::save);
     }
 
     /**
@@ -195,6 +210,7 @@ public class ItemServiceImpl implements ItemService {
     public void removeItem(String id) {
         if (itemRepository.existsByItemStringId(id)) {
             itemRepository.deleteByItemStringId(id);
+            historyItemRepository.deleteByItemStringId(id);
         } else {
             throw new ItemNotFoundException(id);
         }
@@ -211,6 +227,20 @@ public class ItemServiceImpl implements ItemService {
     public List<Item> findFilesByDayAgo(LocalDateTime endDate) {
         LocalDateTime startDate = endDate.minusHours(24);
         return itemRepository.findByDateBetweenAndType(startDate, endDate, SystemItemType.FILE);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<HistoryItem> findHistoryByIdAndRange(String id, LocalDateTime startDate, LocalDateTime endDate) {
+        if (startDate.isAfter(endDate)){
+            log.warn("Item id: {} Start date {} must be before end date {}", id, startDate, endDate);
+            throw new ItemValidationException(id, "Start date must be before end date");
+        }
+        if (!itemRepository.existsByItemStringId(id)){
+            log.warn("Item id: {} can't found", id);
+            throw new ItemNotFoundException(id);
+        }
+        return historyItemRepository.findByItemStringIdAndDateBetween(id, startDate, endDate);
     }
 
 

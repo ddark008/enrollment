@@ -1,6 +1,7 @@
 package ru.ddark008.yadisk.services;
 
 
+import ru.ddark008.yadisk.entities.HistoryItem;
 import ru.ddark008.yadisk.entities.Item;
 
 import java.time.LocalDateTime;
@@ -20,4 +21,6 @@ public interface ItemService {
      * @return список обновленных файлов за этот период
      */
     List<Item> findFilesByDayAgo(LocalDateTime endDate);
+
+    List<HistoryItem> findHistoryByIdAndRange(String id, LocalDateTime startDate, LocalDateTime endDate);
 }

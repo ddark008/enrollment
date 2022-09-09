@@ -32,11 +32,11 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
     void deleteByItemStringId(String id);
 
     /**
-     * Получение списка элментов типа {@code type}, которые были обновлены в дипазоне от {@code startDate} до {@code endDate} включительно
+     * Получение списка элементов типа {@code type}, которые были обновлены в интервале от {@code startDate} до {@code endDate} включительно
      *
-     * @param startDate - начало периода выборки данных (включительно)
-     * @param endDate - окончание периода выборки данных (включительно)
-     * @return - выборка элементов по типу и периоду обновления
+     * @param startDate - начало интервала выборки данных (включительно)
+     * @param endDate - окончание интервала выборки данных (включительно)
+     * @return - выборка элементов по типу и интервалу обновления
      */
     List<Item> findByDateBetweenAndType(LocalDateTime startDate, LocalDateTime endDate, SystemItemType type);
 }
