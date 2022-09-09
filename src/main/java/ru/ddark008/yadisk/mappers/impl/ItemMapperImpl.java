@@ -1,5 +1,6 @@
 package ru.ddark008.yadisk.mappers.impl;
 
+import org.springframework.stereotype.Component;
 import ru.ddark008.yadisk.entities.Item;
 import ru.ddark008.yadisk.mappers.ItemMapper;
 import ru.ddark008.yadisk.model.SystemItem;
@@ -8,6 +9,7 @@ import ru.ddark008.yadisk.model.SystemItemImport;
 
 import java.time.OffsetDateTime;
 
+@Component
 public class ItemMapperImpl implements ItemMapper {
     @Override
     public Item toEntity(SystemItemImport dto, OffsetDateTime date) {
