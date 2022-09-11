@@ -10,19 +10,24 @@
 > To skip the tests use: `-DskipTests=true`
 
 - Extract libraries from `fat-jar`
-
-`$ mkdir -p target/dependency && (cd target/dependency; jar -xf ../*.jar)`
+  - Unix:  
+  `$ mkdir -p target/dependency && (cd target/dependency; jar -xf ../*.jar)`
+  - Windows:  
+  `$   mkdir target/dependency; cd target/dependency; jar -xf ../*.jar`  
 
 ## Build
-
+Run from root:  
 `$ docker build -t ddark008/yadisk .`
 
 ## Run
 
-`$ docker-compose up`
+`$ docker compose up`
 
 ## Verify the application is running
 
 > Application listens on port 80.
 
 Open in browser documentation: [http://localhost](http://localhost)
+
+## Run tests
+`$  py .\unit_test.py`
