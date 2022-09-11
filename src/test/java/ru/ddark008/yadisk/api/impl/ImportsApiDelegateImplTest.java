@@ -1,11 +1,11 @@
 package ru.ddark008.yadisk.api.impl;
 
+import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
@@ -14,7 +14,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
+// Тестовая БД, не требует postgresql, запускается на время тестов
+@AutoConfigureEmbeddedDatabase(refresh = AutoConfigureEmbeddedDatabase.RefreshMode.AFTER_EACH_TEST_METHOD, provider = AutoConfigureEmbeddedDatabase.DatabaseProvider.ZONKY)
 class ImportsApiDelegateImplTest {
 
     private final String VALIDATION_FALED = """
@@ -444,5 +445,9 @@ class ImportsApiDelegateImplTest {
                                                                 """)
         ).andExpect(status().isOk());
         System.out.println();
+    }
+
+    public void setMockMvc(MockMvc mockMvc) {
+        this.mockMvc = mockMvc;
     }
 }

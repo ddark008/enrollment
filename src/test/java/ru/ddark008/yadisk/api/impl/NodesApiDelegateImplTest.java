@@ -1,23 +1,23 @@
 package ru.ddark008.yadisk.api.impl;
 
+import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
+// Тестовая БД, не требует postgresql, запускается на время тестов
+@AutoConfigureEmbeddedDatabase(refresh = AutoConfigureEmbeddedDatabase.RefreshMode.AFTER_EACH_TEST_METHOD, provider = AutoConfigureEmbeddedDatabase.DatabaseProvider.ZONKY)
 class NodesApiDelegateImplTest {
 
     private final String VALIDATION_FALED = """
@@ -58,7 +58,7 @@ class NodesApiDelegateImplTest {
                                 """)
         ).andExpect(status().isOk());
 
-        MvcResult result  = this.mockMvc.perform(
+        MvcResult result = this.mockMvc.perform(
                 MockMvcRequestBuilders.get("/nodes/элемент_1_1")
         ).andExpect(status().isOk()).andReturn();
         JSONObject json = new JSONObject(result.getResponse().getContentAsString());
@@ -128,7 +128,7 @@ class NodesApiDelegateImplTest {
                                                                 """)
         ).andExpect(status().isOk());
 
-        MvcResult result  = this.mockMvc.perform(
+        MvcResult result = this.mockMvc.perform(
                 MockMvcRequestBuilders.get("/nodes/элемент_1")
         ).andExpect(status().isOk()).andReturn();
         JSONObject json = new JSONObject(result.getResponse().getContentAsString());
