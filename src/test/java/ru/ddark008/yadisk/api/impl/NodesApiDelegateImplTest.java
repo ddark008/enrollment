@@ -13,27 +13,13 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static ru.ddark008.yadisk.api.impl.ErrorValues.NOT_FOUND;
 
 @SpringBootTest
 @AutoConfigureMockMvc
 // Тестовая БД, не требует postgresql, запускается на время тестов
 @AutoConfigureEmbeddedDatabase(refresh = AutoConfigureEmbeddedDatabase.RefreshMode.AFTER_EACH_TEST_METHOD, provider = AutoConfigureEmbeddedDatabase.DatabaseProvider.ZONKY)
 class NodesApiDelegateImplTest {
-
-    private final String VALIDATION_FALED = """
-            {
-              "code": 400,
-              "message": "Validation Failed"
-            }
-            """;
-
-    private final String NOT_FOUND = """
-            {
-              "code": 404,
-              "message": "Item not found"
-            }
-            """;
-
     @Autowired
     private MockMvc mockMvc;
 
