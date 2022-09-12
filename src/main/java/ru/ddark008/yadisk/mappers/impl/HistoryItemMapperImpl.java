@@ -33,6 +33,7 @@ public class HistoryItemMapperImpl implements HistoryItemMapper {
                 .id(entity.getItemStringId())
                 .url(entity.getUrl())
                 .parentId(entity.getParentStringId())
+                .type(entity.getType())
                 .size(entity.getSize() == null?0:entity.getSize())
                 .date(entity.getDate().atOffset(ZoneOffset.UTC));
     }

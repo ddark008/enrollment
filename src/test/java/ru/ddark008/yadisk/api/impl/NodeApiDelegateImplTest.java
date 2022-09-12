@@ -1,6 +1,7 @@
 package ru.ddark008.yadisk.api.impl;
 
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
+import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -124,7 +125,7 @@ class NodeApiDelegateImplTest {
                       "date": "2022-05-28T00:00:00Z",
                       "size": 1,
                       "id": "2",
-                      "type": null,
+                      "type": "FILE",
                       "url": "test",
                       "parentId": "1"
                     },
@@ -132,7 +133,7 @@ class NodeApiDelegateImplTest {
                       "date": "2022-05-28T00:00:01Z",
                       "size": 2,
                       "id": "2",
-                      "type": null,
+                      "type": "FILE",
                       "url": "test",
                       "parentId": "1"
                     }
@@ -141,6 +142,43 @@ class NodeApiDelegateImplTest {
                 """;
         MvcResult result = this.mockMvc.perform(
                 MockMvcRequestBuilders.get("/node/2/history?dateStart=2022-05-28T00:00:00.000Z&dateEnd=2022-05-29T00:00:00.000Z")
+        ).andExpect(status().isOk()).andExpect(content().json(result_json)).andReturn();
+//        JSONObject json = new JSONObject(result.getResponse().getContentAsString());
+//        System.out.println(json.toString(4));
+    }
+
+    /**
+     * Проверка, что формат папок правильный
+     * @throws Exception
+     */
+    @Test
+    public void testFolder() throws Exception {
+        // Загрузка данных
+        importData();
+        String result_json = """
+            {
+              "items": [
+                {
+                  "date": "2022-05-28T00:00:00Z",
+                  "size": 1,
+                  "id": "1",
+                  "type": "FOLDER",
+                  "url": null,
+                  "parentId": null
+                },
+                {
+                  "date": "2022-05-28T00:00:01Z",
+                  "size": 2,
+                  "id": "1",
+                  "type": "FOLDER",
+                  "url": null,
+                  "parentId": null
+                }
+              ]
+            }
+                """;
+        MvcResult result = this.mockMvc.perform(
+                MockMvcRequestBuilders.get("/node/1/history?dateStart=2022-05-28T00:00:00.000Z&dateEnd=2022-05-29T00:00:00.000Z")
         ).andExpect(status().isOk()).andExpect(content().json(result_json)).andReturn();
 //        JSONObject json = new JSONObject(result.getResponse().getContentAsString());
 //        System.out.println(json.toString(4));
@@ -191,7 +229,7 @@ class NodeApiDelegateImplTest {
                       "date": "2022-05-28T00:00:00Z",
                       "size": 1,
                       "id": "2",
-                      "type": null,
+                      "type": "FILE",
                       "url": "test",
                       "parentId": "1"
                     }
