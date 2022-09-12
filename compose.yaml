@@ -16,7 +16,7 @@ services:
   backend:
     image: ddark008/yadisk
     ports:
-      - 8080:80
+      - 80:8080
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/${DB_NAME}
       - SPRING_DATASOURCE_USERNAME=${DB_USER}
