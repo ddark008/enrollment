@@ -192,19 +192,17 @@ public class ItemServiceImpl implements ItemService {
             // Если файл или уже обработан, то ничего не делаем
             if (item.getType() == SystemItemType.FILE || !notVisitedList.contains(item)) return;
 
-            Set<Item> children = item.getChildren();
             long size = 0L;
-            if (children.size() > 0) {
-                for (Item child : children) {
-                    // Если дочерняя папка изменена, но не перерасчитана - запускаем расчет для неё
-                    if (notVisitedList.contains(child)) {
-                        calculateSize(child, date, notVisitedList);
-                    }
-                    Long child_size = child.getSize();
-                    if (child_size == null) child_size = 0L;
-                    size += child_size;
+            for (Item child : item.getChildren()) {
+                // Если дочерняя папка изменена, но не перерасчитана - запускаем расчет для неё
+                if (notVisitedList.contains(child)) {
+                    calculateSize(child, date, notVisitedList);
                 }
+                Long child_size = child.getSize();
+                if (child_size == null) child_size = 0L;
+                size += child_size;
             }
+
             // Добавляем данные
             item.setSize(size);
             item.setDate(date);
@@ -230,8 +228,20 @@ public class ItemServiceImpl implements ItemService {
         itemRepository.saveAllAndFlush(sizeRecalculate);
 
         // Удаляем элемент из БД и очищаем историю его изменений
+        removeHistory(removedItem);
         itemRepository.deleteByItemStringId(id);
-        historyItemRepository.deleteByItemStringId(id);
+    }
+
+    /**
+     * Рекурсивное удаление истории элемента и его потомков
+     * @param item
+     */
+    @Transactional
+    public void removeHistory(Item item) {
+        historyItemRepository.deleteByItemStringId(item.getItemStringId());
+        for (Item child: item.getChildren()) {
+            removeHistory(child);
+        }
     }
 
     @Override
