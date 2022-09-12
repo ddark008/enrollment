@@ -57,7 +57,7 @@ class NodesApiDelegateImplTest {
         ).andExpect(status().isOk());
 
         MvcResult result = this.mockMvc.perform(
-                MockMvcRequestBuilders.get("/nodes/элемент_1_1")
+                MockMvcRequestBuilders.get("/nodes/1")
         ).andExpect(status().isOk()).andExpect(content().json(response_json)).andReturn();
 //        JSONObject json = new JSONObject(result.getResponse().getContentAsString());
 //        System.out.println(json.toString(4));
