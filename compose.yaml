@@ -15,6 +15,7 @@ services:
 
   backend:
     image: ddark008/yadisk
+    restart: always
     ports:
       - 80:8080
     environment:
