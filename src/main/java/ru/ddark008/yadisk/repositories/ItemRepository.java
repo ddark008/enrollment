@@ -32,7 +32,7 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
      *
      * @param id - элемента для удаления
      */
-    void deleteByItemStringId(String id);
+    long deleteByItemStringId(String id);
 
     /**
      * Получение списка элементов типа {@code type}, которые были обновлены в интервале от {@code startDate} до {@code endDate} включительно

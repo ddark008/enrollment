@@ -208,10 +208,11 @@ public class ItemServiceImpl implements ItemService {
     @Override
     @Transactional
     public void removeItem(String id) {
-        if (itemRepository.existsByItemStringId(id)) {
-            itemRepository.deleteByItemStringId(id);
-            historyItemRepository.deleteByItemStringId(id);
-        } else {
+        long count = itemRepository.deleteByItemStringId(id);
+        historyItemRepository.deleteByItemStringId(id);
+        // Если ничего не удалили
+        if (count == 0) {
+            log.warn("Try delete obsolete: {}", id);
             throw new ItemNotFoundException(id);
         }
     }
