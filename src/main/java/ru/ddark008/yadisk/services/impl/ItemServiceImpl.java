@@ -215,14 +215,23 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     @Transactional
-    public void removeItem(String id) {
-        long count = itemRepository.deleteByItemStringId(id);
-        historyItemRepository.deleteByItemStringId(id);
-        // Если ничего не удалили
-        if (count == 0) {
-            log.warn("Try delete obsolete: {}", id);
-            throw new ItemNotFoundException(id);
+    public void removeItem(String id, LocalDateTime date) {
+        Item removedItem = findByIdItem(id);
+        // Добавляем родителей в список на перерасчет размера
+        Set<Item> sizeRecalculate = new HashSet<>();
+        addParentsToSet(removedItem, sizeRecalculate);
+        removeFromParent(removedItem);
+
+        // Список ещё не обработанных папок, чтобы при рекурсии их не обрабатывать несколько раз
+        Set<Item> notVisitedList = new HashSet<>(sizeRecalculate);
+        for (Item item : sizeRecalculate) {
+            calculateSize(item, date, notVisitedList);
         }
+        itemRepository.saveAllAndFlush(sizeRecalculate);
+
+        // Удаляем элемент из БД и очищаем историю его изменений
+        itemRepository.deleteByItemStringId(id);
+        historyItemRepository.deleteByItemStringId(id);
     }
 
     @Override

@@ -7,6 +7,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -131,5 +132,79 @@ class DeleteApiDelegateImplTest {
         this.mockMvc.perform(
                 MockMvcRequestBuilders.delete("/delete/test?date=2022-05-28T21:12:01.516Z")
         ).andExpect(status().isNotFound()).andExpect(content().json(NOT_FOUND));
+    }
+
+    @Test
+    public void recalculateSizeAfterDelete() throws Exception {
+        this.mockMvc.perform(
+                MockMvcRequestBuilders.post("/imports")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                  {
+                                  "items": [
+                                    {
+                                      "id": "1_1",
+                                      "type": "FILE",
+                                      "url": "aliqua et temp",
+                                      "parentId": "1_2",
+                                      "size": 93490855
+                                    },
+                                    {
+                                      "id": "1_2",
+                                      "type": "FOLDER",
+                                      "url": null,
+                                      "parentId": null,
+                                      "size": null
+                                    }
+                                  ],
+                                  "updateDate": "2022-05-28T21:12:01Z"
+                                }
+                                                                """)
+        ).andExpect(status().isOk());
+        String result_json = """
+                {
+                  "date": "2022-05-28T21:12:01Z",
+                  "size": 93490855,
+                  "children": [
+                    {
+                      "date": "2022-05-28T21:12:01Z",
+                      "size": 93490855,
+                      "children": null,
+                      "id": "1_1",
+                      "type": "FILE",
+                      "url": "aliqua et temp",
+                      "parentId": "1_2"
+                    }
+                  ],
+                  "id": "1_2",
+                  "type": "FOLDER",
+                  "url": null,
+                  "parentId": null
+                }
+                """;
+        MvcResult result = this.mockMvc.perform(
+                MockMvcRequestBuilders.get("/nodes/1_2")
+        ).andExpect(status().isOk()).andExpect(content().json(result_json)).andReturn();
+
+        this.mockMvc.perform(
+                MockMvcRequestBuilders.delete("/delete/1_1?date=2022-05-28T21:12:01.516Z")
+        ).andExpect(status().isOk());
+
+
+        result_json = """
+                {
+                    "date": "2022-05-28T21:12:01.516Z",
+                    "size": 0,
+                    "children": [],
+                    "id": "1_2",
+                    "type": "FOLDER",
+                    "url": null,
+                    "parentId": null
+                }
+                """;
+        result = this.mockMvc.perform(
+                MockMvcRequestBuilders.get("/nodes/1_2")
+        ).andExpect(status().isOk()).andReturn();
+        System.out.println();
     }
 }

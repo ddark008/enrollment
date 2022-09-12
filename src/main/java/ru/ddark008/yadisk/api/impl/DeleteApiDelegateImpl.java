@@ -7,7 +7,9 @@ import org.springframework.stereotype.Component;
 import ru.ddark008.yadisk.api.DeleteApiDelegate;
 import ru.ddark008.yadisk.services.ItemService;
 
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 
 @Slf4j
 @Component
@@ -22,7 +24,8 @@ public class DeleteApiDelegateImpl implements DeleteApiDelegate {
     @Override
     public ResponseEntity<Void> deleteIdDelete(String id, OffsetDateTime date) {
         log.info("Delete item: {}, date: {}", id, date);
-        itemService.removeItem(id);
+        LocalDateTime localDate = date.withOffsetSameInstant(ZoneOffset.UTC).toLocalDateTime();
+        itemService.removeItem(id, localDate);
         return ResponseEntity.ok().build();
     }
 }

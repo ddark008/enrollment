@@ -19,8 +19,9 @@ public interface ItemService {
      * Удаление элемента и его потомков по Id
      *
      * @param id элемента для удаления
+     * @param date метка времени для обновления родительских компонентов
      */
-    void removeItem(String id);
+    void removeItem(String id, LocalDateTime date);
 
     /**
      * Поиск элемента по Id
