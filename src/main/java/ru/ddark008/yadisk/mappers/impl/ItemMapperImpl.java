@@ -69,7 +69,7 @@ public class ItemMapperImpl implements ItemMapper {
                 .url(entity.getUrl())
                 .date(entity.getDate().atOffset(ZoneOffset.UTC))
                 .parentId(entity.getParentStringId())
-                .size(entity.getSize())
+                .size(entity.getSize() == null?0:entity.getSize())
                 .type(entity.getType());
     }
 }
