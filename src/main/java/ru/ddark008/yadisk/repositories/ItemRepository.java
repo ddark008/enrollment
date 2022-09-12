@@ -8,6 +8,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Интерфес для доступа к данным класса {@code Item} из базы данных
+ */
 public interface ItemRepository extends JpaRepository<Item, Long> {
     /**
      * Получить элемент из БД по Id

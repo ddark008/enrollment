@@ -9,6 +9,9 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+/**
+ * Зафиксированное состояние элемента файловой системы, для отслеживания изменений
+ */
 @Entity
 @Table(name = "history")
 @Getter
@@ -31,7 +34,7 @@ public class HistoryItem {
     private String itemStringId;
 
     /**
-     * Ссылка на файл. Для папок поле равнно null.
+     * Ссылка на файл. Для папок поле равнно null
      */
     @Column(name = "url")
     private String url;
@@ -57,7 +60,7 @@ public class HistoryItem {
     private Long size;
 
     /**
-     * Время обновления добавляемых элементов.
+     * Время фиксации
      */
     @Column(name = "DATE", nullable = false)
     @NotNull

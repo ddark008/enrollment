@@ -11,7 +11,11 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+/**
+ * Элемент файловой системы
+ */
 @Entity
+// Допустимы только уникальные Id элементов
 @Table(name = "filesystem",
         uniqueConstraints = {
                 @UniqueConstraint(columnNames = {"item_string_id"})

@@ -6,6 +6,9 @@ import ru.ddark008.yadisk.entities.HistoryItem;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * Интерфес для доступа к данным класса {@code HistoryItem} из базы данных
+ */
 public interface HistoryItemRepository extends JpaRepository<HistoryItem, Long> {
     /**
      * Удалить историю элемента по Id

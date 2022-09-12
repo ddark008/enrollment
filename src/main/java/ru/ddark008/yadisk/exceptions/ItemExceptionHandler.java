@@ -15,7 +15,9 @@ import org.springframework.web.multipart.support.MissingServletRequestPartExcept
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import ru.ddark008.yadisk.model.Error;
 
-
+/**
+ * Перехват ошибок и преобразование в ответы сервера
+ */
 @ControllerAdvice
 public class ItemExceptionHandler extends ResponseEntityExceptionHandler {
 
@@ -81,13 +83,4 @@ public class ItemExceptionHandler extends ResponseEntityExceptionHandler {
                 .message("Validation Failed");
         return handleExceptionInternal(ex, error, headers, HttpStatus.BAD_REQUEST, request);
     }
-
-
-//    @ExceptionHandler(Exception.class)
-//    public final ResponseEntity<Object> handleAllExceptions(Exception e, WebRequest request) {
-//        Error error = new Error()
-//                .code(HttpStatus.BAD_REQUEST.value())
-//                .message("Validation Failed");
-//        return handleExceptionInternal(e, error, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
-//    }
 }

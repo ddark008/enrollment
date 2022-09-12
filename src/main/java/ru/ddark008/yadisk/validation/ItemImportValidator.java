@@ -7,8 +7,18 @@ import ru.ddark008.yadisk.model.SystemItemType;
 
 import java.util.Map;
 
+/**
+ * Валидация импортируемых данных по требованиям OpenApi
+ */
 @Component
 public class ItemImportValidator {
+    /**
+     * Валидация импортируемых данных по требованиям OpenApi
+     * @param importMap - карта по Id с импортируемыми данными
+     * @param parentMap - карта по Id c родителями импортируемых данных
+     * @param updateMap - карта по Id с элементами для которых, есть новые данные в импортируемых
+     * @throws ItemValidationException - при нарушении условий импорта
+     */
     public void validate(Map<String, Item> importMap, Map<String, Item> parentMap, Map<String, Item> updateMap) {
         for (Item importItem : importMap.values()) {
             // Проверка, что не изменяет тип

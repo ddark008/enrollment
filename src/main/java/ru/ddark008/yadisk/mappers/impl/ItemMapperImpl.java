@@ -16,6 +16,9 @@ import java.util.stream.Collectors;
 
 @Component
 public class ItemMapperImpl implements ItemMapper {
+    /**
+     * @return новый экземпляр класса {@code Item} c {@link java.time.LocalDateTime} в часовом поясе UTC
+     */
     @Override
     public Item toEntity(SystemItemImport dto, OffsetDateTime date) {
         return Item.builder()
@@ -27,7 +30,11 @@ public class ItemMapperImpl implements ItemMapper {
                 .date(date.withOffsetSameInstant(ZoneOffset.UTC).toLocalDateTime())
                 .build();
     }
-
+    /**
+     * Преобразование в {@code SystemItem}
+     * @param entity элемент для преобразования
+     * @return новый экземпляр класса {@code SystemItem} c меткой времени в часовом поясе UTC
+     */
     @Override
     public SystemItem toSystemItem(Item entity) {
         SystemItem systemItem = new SystemItem()
@@ -50,7 +57,11 @@ public class ItemMapperImpl implements ItemMapper {
         }
         return systemItem;
     }
-
+    /**
+     * Преобразование в {@code SystemItemHistoryUnit}
+     * @param entity элемент для преобразования
+     * @return новый экземпляр класса {@code SystemItemHistoryUnit} c меткой времени в часовом поясе UTC
+     */
     @Override
     public SystemItemHistoryUnit toSystemItemHistoryUnit(Item entity) {
         return new SystemItemHistoryUnit()

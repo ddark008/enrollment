@@ -22,6 +22,11 @@ public class HistoryItemMapperImpl implements HistoryItemMapper {
                 .build();
     }
 
+    /**
+     * Преобразование в {@code SystemItemHistoryUnit}
+     * @param entity элмент для преобразования
+     * @return новый экземпляр класса {@code SystemItemHistoryUnit} c меткой времени в часовом поясе UTC
+     */
     @Override
     public SystemItemHistoryUnit toSystemItemHistoryUnit(HistoryItem entity) {
         return new SystemItemHistoryUnit()
