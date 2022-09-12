@@ -1,12 +1,14 @@
 package ru.ddark008.yadisk.api.impl;
 
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
+import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -312,21 +314,21 @@ class ImportsApiDelegateImplTest {
                                   {
                                   "items": [
                                     {
-                                      "id": "элемент_1_1",
+                                      "id": "1_1",
                                       "type": "FILE",
                                       "url": "aliqua et temp",
-                                      "parentId": "элемент_1_2",
+                                      "parentId": "1_2",
                                       "size": 93490855
                                     },
                                     {
-                                      "id": "элемент_1_2",
+                                      "id": "1_2",
                                       "type": "FOLDER",
                                       "url": null,
                                       "parentId": null,
                                       "size": null
                                     },
                                     {
-                                      "id": "элемент_1_3",
+                                      "id": "1_3",
                                       "type": "FOLDER",
                                       "url": null,
                                       "parentId": null,
@@ -337,6 +339,48 @@ class ImportsApiDelegateImplTest {
                                 }
                                                                 """)
         ).andExpect(status().isOk());
+        String result_json = """
+                {
+                  "date": "2022-05-28T21:12:01Z",
+                  "size": 93490855,
+                  "children": [
+                    {
+                      "date": "2022-05-28T21:12:01Z",
+                      "size": 93490855,
+                      "children": null,
+                      "id": "1_1",
+                      "type": "FILE",
+                      "url": "aliqua et temp",
+                      "parentId": "1_2"
+                    }
+                  ],
+                  "id": "1_2",
+                  "type": "FOLDER",
+                  "url": null,
+                  "parentId": null
+                }
+                """;
+        MvcResult result = this.mockMvc.perform(
+                MockMvcRequestBuilders.get("/nodes/1_2")
+        ).andExpect(status().isOk()).andExpect(content().json(result_json)).andReturn();
+//        JSONObject json = new JSONObject(result.getResponse().getContentAsString());
+//        System.out.println(json.toString(4));
+
+        result_json = """
+                {
+                    "date": "2022-05-28T21:12:01Z",
+                    "size": 0,
+                    "children": [],
+                    "id": "1_3",
+                    "type": "FOLDER",
+                    "url": null,
+                    "parentId": null
+                }
+                """;
+        result = this.mockMvc.perform(
+                MockMvcRequestBuilders.get("/nodes/1_3")
+        ).andExpect(status().isOk()).andExpect(content().json(result_json)).andReturn();
+
         this.mockMvc.perform(
                 MockMvcRequestBuilders.post("/imports")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -344,10 +388,10 @@ class ImportsApiDelegateImplTest {
                                   {
                                   "items": [
                                     {
-                                      "id": "элемент_1_1",
+                                      "id": "1_1",
                                       "type": "FILE",
                                       "url": "aliqua et temp",
-                                      "parentId": "элемент_1_3",
+                                      "parentId": "1_3",
                                       "size": 5
                                     }
                                   ],
@@ -355,7 +399,46 @@ class ImportsApiDelegateImplTest {
                                 }
                                                                 """)
         ).andExpect(status().isOk());
-        System.out.println();
+
+        result_json = """
+                {
+                    "date": "2023-05-28T21:13:01Z",
+                    "size": 0,
+                    "children": [],
+                    "id": "1_2",
+                    "type": "FOLDER",
+                    "url": null,
+                    "parentId": null
+                }
+                """;
+        result = this.mockMvc.perform(
+                MockMvcRequestBuilders.get("/nodes/1_2")
+        ).andExpect(status().isOk()).andExpect(content().json(result_json)).andReturn();
+
+        result_json = """
+                {
+                    "date": "2023-05-28T21:13:01Z",
+                    "size": 5,
+                    "children": [
+                        {
+                            "date": "2023-05-28T21:13:01Z",
+                            "size": 5,
+                            "children": null,
+                            "id": "1_1",
+                            "type": "FILE",
+                            "url": "aliqua et temp",
+                            "parentId": "1_3"
+                        }
+                    ],
+                    "id": "1_3",
+                    "type": "FOLDER",
+                    "url": null,
+                    "parentId": null
+                }
+                """;
+        result = this.mockMvc.perform(
+                MockMvcRequestBuilders.get("/nodes/1_3")
+        ).andExpect(status().isOk()).andExpect(content().json(result_json)).andReturn();
     }
 
     @Test
@@ -367,52 +450,52 @@ class ImportsApiDelegateImplTest {
                                   {
                                   "items": [
                                     {
-                                      "id": "элемент_1",
+                                      "id": "1",
                                       "type": "FOLDER",
                                       "url": null,
                                       "parentId": null,
                                       "size": null
                                     },
                                     {
-                                      "id": "элемент_1_1",
+                                      "id": "1_1",
                                       "type": "FILE",
                                       "url": "aliqua et temp",
-                                      "parentId": "элемент_1",
+                                      "parentId": "1",
                                       "size": 1
                                     },
                                     {
-                                      "id": "элемент_1_2",
+                                      "id": "1_2",
                                       "type": "FILE",
                                       "url": "aliqua et temp",
-                                      "parentId": "элемент_1",
+                                      "parentId": "1",
                                       "size": 2
                                     },
                                     {
-                                      "id": "элемент_1_3",
+                                      "id": "1_3",
                                       "type": "FOLDER",
                                       "url": null,
-                                      "parentId": "элемент_1",
+                                      "parentId": "1",
                                       "size": null
                                     },
                                     {
-                                      "id": "элемент_1_3_1",
+                                      "id": "1_3_1",
                                       "type": "FILE",
                                       "url": "aliqua et temp",
-                                      "parentId": "элемент_1_3",
+                                      "parentId": "1_3",
                                       "size": 3
                                     },
                                     {
-                                      "id": "элемент_1_3_2",
+                                      "id": "1_3_2",
                                       "type": "FILE",
                                       "url": "aliqua et temp",
-                                      "parentId": "элемент_1_3",
+                                      "parentId": "1_3",
                                       "size": 4
                                     },
                                     {
-                                      "id": "элемент_1_4",
+                                      "id": "1_4",
                                       "type": "FOLDER",
                                       "url": null,
-                                      "parentId": "элемент_1",
+                                      "parentId": "1",
                                       "size": null
                                     }
                                   ],
@@ -420,6 +503,80 @@ class ImportsApiDelegateImplTest {
                                 }
                                                                 """)
         ).andExpect(status().isOk());
+
+        String result_json = """
+                {
+                  "id": "1",
+                  "type": "FOLDER",
+                  "url": null,
+                  "parentId": null,
+                  "size": 10,
+                  "date": "2022-05-28T21:12:01Z",
+                  "children": [
+                    {
+                      "id": "1_1",
+                      "type": "FILE",
+                      "url": "aliqua et temp",
+                      "parentId": "1",
+                      "size": 1,
+                      "children": null,
+                      "date": "2022-05-28T21:12:01Z"
+                    },
+                    {
+                      "id": "1_2",
+                      "type": "FILE",
+                      "url": "aliqua et temp",
+                      "parentId": "1",
+                      "size": 2,
+                      "children": null,
+                      "date": "2022-05-28T21:12:01Z"
+                    },
+                    {
+                      "id": "1_3",
+                      "type": "FOLDER",
+                      "url": null,
+                      "parentId": "1",
+                      "size": 7,
+                      "date": "2022-05-28T21:12:01Z",
+                      "children": [
+                        {
+                          "id": "1_3_1",
+                          "type": "FILE",
+                          "url": "aliqua et temp",
+                          "parentId": "1_3",
+                          "size": 3,
+                          "children": null,
+                          "date": "2022-05-28T21:12:01Z"
+                        },
+                        {
+                          "id": "1_3_2",
+                          "type": "FILE",
+                          "url": "aliqua et temp",
+                          "parentId": "1_3",
+                          "size": 4,
+                          "children": null,
+                          "date": "2022-05-28T21:12:01Z"
+                        }
+                      ]
+                    },
+                    {
+                      "id": "1_4",
+                      "type": "FOLDER",
+                      "url": null,
+                      "parentId": "1",
+                      "size": 0,
+                      "children": [],
+                      "date": "2022-05-28T21:12:01Z"
+                    }
+                  ]
+                }
+                """;
+        MvcResult result = this.mockMvc.perform(
+                MockMvcRequestBuilders.get("/nodes/1")
+        ).andExpect(status().isOk()).andExpect(content().json(result_json)).andReturn();
+//        JSONObject json = new JSONObject(result.getResponse().getContentAsString());
+//        System.out.println(json.toString(4));
+
         this.mockMvc.perform(
                 MockMvcRequestBuilders.post("/imports")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -427,17 +584,88 @@ class ImportsApiDelegateImplTest {
                                   {
                                   "items": [
                                     {
-                                      "id": "элемент_1_3_2",
+                                      "id": "1_3_2",
                                       "type": "FILE",
                                       "url": "aliqua et temp",
-                                      "parentId": "элемент_1_4",
+                                      "parentId": "1_4",
                                       "size": 4
                                     }
                                   ],
-                                  "updateDate": "2023-05-28T21:13:01Z"
+                                  "updateDate": "2023-05-28T21:13:02Z"
                                 }
                                                                 """)
         ).andExpect(status().isOk());
-        System.out.println();
+
+        result_json = """
+                {
+                  "id": "1",
+                  "type": "FOLDER",
+                  "url": null,
+                  "parentId": null,
+                  "size": 10,
+                  "date": "2023-05-28T21:13:02Z",
+                  "children": [
+                    {
+                      "id": "1_1",
+                      "type": "FILE",
+                      "url": "aliqua et temp",
+                      "parentId": "1",
+                      "size": 1,
+                      "children": null,
+                      "date": "2022-05-28T21:12:01Z"
+                    },
+                    {
+                      "id": "1_2",
+                      "type": "FILE",
+                      "url": "aliqua et temp",
+                      "parentId": "1",
+                      "size": 2,
+                      "children": null,
+                      "date": "2022-05-28T21:12:01Z"
+                    },
+                    {
+                      "id": "1_3",
+                      "type": "FOLDER",
+                      "url": null,
+                      "parentId": "1",
+                      "size": 3,
+                      "date": "2023-05-28T21:13:02Z",
+                      "children": [
+                        {
+                          "id": "1_3_1",
+                          "type": "FILE",
+                          "url": "aliqua et temp",
+                          "parentId": "1_3",
+                          "size": 3,
+                          "children": null,
+                          "date": "2022-05-28T21:12:01Z"
+                        }
+                      ]
+                    },
+                    {
+                      "id": "1_4",
+                      "type": "FOLDER",
+                      "url": null,
+                      "parentId": "1",
+                      "size": 4,
+                      "children": [
+                        {
+                          "id": "1_3_2",
+                          "type": "FILE",
+                          "url": "aliqua et temp",
+                          "parentId": "1_4",
+                          "size": 4,
+                          "children": null,
+                          "date": "2023-05-28T21:13:02Z"
+                        }
+                      ],
+                      "date": "2023-05-28T21:13:02Z"
+                    }
+                  ]
+                }
+                """;
+        result = this.mockMvc.perform(
+                MockMvcRequestBuilders.get("/nodes/1")
+        ).andExpect(status().isOk()).andExpect(content().json(result_json)).andReturn();
     }
 }

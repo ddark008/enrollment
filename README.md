@@ -20,7 +20,7 @@ Run from root:
 `$ docker build -t ddark008/yadisk .`
 
 ## Run
-
+Update data in `.env` file and run:
 `$ docker compose up`
 
 ## Verify the application is running
