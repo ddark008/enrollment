@@ -116,13 +116,14 @@ public class ItemServiceImpl implements ItemService {
 
         // В начале метода проверка, что список не пустой
         LocalDateTime date = importItems.get(0).getDate();
-        // Список ещё не обработанных папок
+        // Список ещё не обработанных папок, чтобы при рекурсии их не обрабатывать несколько раз
         Set<Item> notVisitedList = new HashSet<>(sizeRecalculate);
         for (Item item : sizeRecalculate) {
             calculateSize(item, date, notVisitedList);
         }
         itemRepository.saveAll(sizeRecalculate);
 
+        // Фиксация изменений элементов в истории
         Set<Item> changedItems = new HashSet<>();
         changedItems.addAll(newItems);
         changedItems.addAll(updateMap.values());
@@ -178,6 +179,13 @@ public class ItemServiceImpl implements ItemService {
         }
     }
 
+    /**
+     * Перерасчет размера содержимого папки, с рекурсивным перерасчетом размера дочерних папок, если они были обновлены
+     *
+     * @param item           папка для расчета размера
+     * @param date           метка времени для фиксации времени перерасчета
+     * @param notVisitedList список обновленных папок
+     */
     @Transactional
     private void calculateSize(Item item, LocalDateTime date, Set<Item> notVisitedList) {
         if (item != null) {
@@ -188,7 +196,7 @@ public class ItemServiceImpl implements ItemService {
             long size = 0L;
             if (children.size() > 0) {
                 for (Item child : children) {
-                    // Если ребенок изменен, но не перерасчитан - запускаем расчет для него
+                    // Если дочерняя папка изменена, но не перерасчитана - запускаем расчет для неё
                     if (notVisitedList.contains(child)) {
                         calculateSize(child, date, notVisitedList);
                     }
@@ -233,15 +241,19 @@ public class ItemServiceImpl implements ItemService {
     @Override
     @Transactional(readOnly = true)
     public List<HistoryItem> findHistoryByIdAndRange(String id, LocalDateTime startDate, LocalDateTime endDate) {
-        if (startDate.isAfter(endDate)){
+        if (startDate.isAfter(endDate)) {
             log.warn("Item id: {} Start date {} must be before end date {}", id, startDate, endDate);
             throw new ItemValidationException(id, "Start date must be before end date");
         }
-        if (!itemRepository.existsByItemStringId(id)){
+        if (!itemRepository.existsByItemStringId(id)) {
             log.warn("Item id: {} can't found", id);
             throw new ItemNotFoundException(id);
         }
-        return historyItemRepository.findByItemStringIdAndDateBetween(id, startDate, endDate);
+        if (startDate.isEqual(endDate)){
+            return historyItemRepository.findByItemStringIdAndDate(id, startDate);
+        } else {
+            return historyItemRepository.findByItemStringIdAndDateGreaterThanEqualAndDateLessThan(id, startDate, endDate);
+        }
     }
 
 
