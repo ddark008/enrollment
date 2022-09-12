@@ -11,19 +11,13 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static ru.ddark008.yadisk.api.impl.ErrorValues.VALIDATION_FAILED;
 
 @SpringBootTest
 @AutoConfigureMockMvc
 // Тестовая БД, не требует postgresql, запускается на время тестов
 @AutoConfigureEmbeddedDatabase(refresh = AutoConfigureEmbeddedDatabase.RefreshMode.AFTER_EACH_TEST_METHOD, provider = AutoConfigureEmbeddedDatabase.DatabaseProvider.ZONKY)
 class ImportsApiDelegateImplTest {
-
-    private final String VALIDATION_FALED = """
-            {
-              "code": 400,
-              "message": "Validation Failed"
-            }
-            """;
 
     @Autowired
     private MockMvc mockMvc;
@@ -83,7 +77,7 @@ class ImportsApiDelegateImplTest {
                                   "updateDate": "2022-05-28T21:12:01.000Z"
                                 }
                                                                 """)
-        ).andExpect(status().isBadRequest()).andExpect(content().json(VALIDATION_FALED));
+        ).andExpect(status().isBadRequest()).andExpect(content().json(VALIDATION_FAILED));
     }
 
     @Test
@@ -105,7 +99,7 @@ class ImportsApiDelegateImplTest {
                                   "updateDate": "2022-05-28T21:12:01.000Z"
                                 }
                                                                 """)
-        ).andExpect(status().isBadRequest()).andExpect(content().json(VALIDATION_FALED));
+        ).andExpect(status().isBadRequest()).andExpect(content().json(VALIDATION_FAILED));
     }
 
     @Test
@@ -134,7 +128,7 @@ class ImportsApiDelegateImplTest {
                                   "updateDate": "2022-05-28T21:12:01.000Z"
                                 }
                                                                 """)
-        ).andExpect(status().isBadRequest()).andExpect(content().json(VALIDATION_FALED));
+        ).andExpect(status().isBadRequest()).andExpect(content().json(VALIDATION_FAILED));
     }
 
     @Test
@@ -174,7 +168,7 @@ class ImportsApiDelegateImplTest {
                                   "updateDate": "2022-05-28T21:12:01Z"
                                 }
                                                                 """)
-        ).andExpect(status().isBadRequest()).andExpect(content().json(VALIDATION_FALED));
+        ).andExpect(status().isBadRequest()).andExpect(content().json(VALIDATION_FAILED));
     }
 
     @Test
@@ -196,7 +190,7 @@ class ImportsApiDelegateImplTest {
                                   "updateDate": "2022-05-28T21:12:01.000Z"
                                 }
                                                                 """)
-        ).andExpect(status().isBadRequest()).andExpect(content().json(VALIDATION_FALED));
+        ).andExpect(status().isBadRequest()).andExpect(content().json(VALIDATION_FAILED));
     }
 
     @Test
@@ -218,7 +212,7 @@ class ImportsApiDelegateImplTest {
                                   "updateDate": "2022-05-28T21:12:01.000Z"
                                 }
                                                                 """)
-        ).andExpect(status().isBadRequest()).andExpect(content().json(VALIDATION_FALED));
+        ).andExpect(status().isBadRequest()).andExpect(content().json(VALIDATION_FAILED));
     }
 
     @Test
@@ -240,7 +234,7 @@ class ImportsApiDelegateImplTest {
                                   "updateDate": "2022-05-28T21:12:01.000Z"
                                 }
                                                                 """)
-        ).andExpect(status().isBadRequest()).andExpect(content().json(VALIDATION_FALED));
+        ).andExpect(status().isBadRequest()).andExpect(content().json(VALIDATION_FAILED));
     }
 
     @Test
@@ -262,7 +256,7 @@ class ImportsApiDelegateImplTest {
                                   "updateDate": "2022-05-28T21:12:01.000Z"
                                 }
                                                                 """)
-        ).andExpect(status().isBadRequest()).andExpect(content().json(VALIDATION_FALED));
+        ).andExpect(status().isBadRequest()).andExpect(content().json(VALIDATION_FAILED));
     }
 
     @Test
@@ -284,7 +278,7 @@ class ImportsApiDelegateImplTest {
                                   "updateDate": "2022-05-28T21:12:01.000Z"
                                 }
                                                                 """)
-        ).andExpect(status().isBadRequest()).andExpect(content().json(VALIDATION_FALED));
+        ).andExpect(status().isBadRequest()).andExpect(content().json(VALIDATION_FAILED));
     }
 
     @Test
@@ -306,7 +300,7 @@ class ImportsApiDelegateImplTest {
                                   "updateDate": "2022-05-28T21:12:01.000Z"
                                 }
                                                                 """)
-        ).andExpect(status().isBadRequest()).andExpect(content().json(VALIDATION_FALED));
+        ).andExpect(status().isBadRequest()).andExpect(content().json(VALIDATION_FAILED));
     }
 
     @Test
@@ -445,9 +439,5 @@ class ImportsApiDelegateImplTest {
                                                                 """)
         ).andExpect(status().isOk());
         System.out.println();
-    }
-
-    public void setMockMvc(MockMvc mockMvc) {
-        this.mockMvc = mockMvc;
     }
 }

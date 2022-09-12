@@ -11,6 +11,8 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static ru.ddark008.yadisk.api.impl.ErrorValues.NOT_FOUND;
+import static ru.ddark008.yadisk.api.impl.ErrorValues.VALIDATION_FAILED;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -18,19 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureEmbeddedDatabase(refresh = AutoConfigureEmbeddedDatabase.RefreshMode.AFTER_EACH_TEST_METHOD, provider = AutoConfigureEmbeddedDatabase.DatabaseProvider.ZONKY)
 class DeleteApiDelegateImplTest {
 
-    private final String VALIDATION_FALED = """
-            {
-              "code": 400,
-              "message": "Validation Failed"
-            }
-            """;
 
-    private final String NOT_FOUND = """
-            {
-              "code": 404,
-              "message": "Item not found"
-            }
-            """;
 
     @Autowired
     private MockMvc mockMvc;
@@ -100,7 +90,7 @@ class DeleteApiDelegateImplTest {
 
         this.mockMvc.perform(
                 MockMvcRequestBuilders.delete("/delete/элемент_1_2?date=21")
-        ).andExpect(status().isBadRequest()).andExpect(content().json(VALIDATION_FALED));
+        ).andExpect(status().isBadRequest()).andExpect(content().json(VALIDATION_FAILED));
     }
 
     @Test
@@ -133,7 +123,7 @@ class DeleteApiDelegateImplTest {
 
         this.mockMvc.perform(
                 MockMvcRequestBuilders.delete("/delete/элемент_1_2")
-        ).andExpect(status().isBadRequest()).andExpect(content().json(VALIDATION_FALED));
+        ).andExpect(status().isBadRequest()).andExpect(content().json(VALIDATION_FAILED));
     }
 
     @Test
