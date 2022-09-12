@@ -25,6 +25,18 @@ class NodesApiDelegateImplTest {
 
     @Test
     public void oneLevel() throws Exception {
+        String response_json = """
+                
+                {
+                    "date": "2022-05-28T21:12:01Z",
+                    "size": 93490855,
+                    "children": null,
+                    "id": "1",
+                    "type": "FILE",
+                    "url": "aliqua et temp",
+                    "parentId": null
+                }
+                """;
         this.mockMvc.perform(
                 MockMvcRequestBuilders.post("/imports")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -32,7 +44,7 @@ class NodesApiDelegateImplTest {
                                   {
                                   "items": [
                                     {
-                                      "id": "элемент_1_1",
+                                      "id": "1",
                                       "type": "FILE",
                                       "url": "aliqua et temp",
                                       "parentId": null,
@@ -46,13 +58,80 @@ class NodesApiDelegateImplTest {
 
         MvcResult result = this.mockMvc.perform(
                 MockMvcRequestBuilders.get("/nodes/элемент_1_1")
-        ).andExpect(status().isOk()).andReturn();
-        JSONObject json = new JSONObject(result.getResponse().getContentAsString());
-        System.out.println(json.toString(4));
+        ).andExpect(status().isOk()).andExpect(content().json(response_json)).andReturn();
+//        JSONObject json = new JSONObject(result.getResponse().getContentAsString());
+//        System.out.println(json.toString(4));
     }
 
     @Test
     public void mixLevel() throws Exception {
+        String response_json = """
+                {
+                  "date": "2022-05-28T21:12:01Z",
+                  "size": 10,
+                  "children": [
+                    {
+                      "date": "2022-05-28T21:12:01Z",
+                      "size": 1,
+                      "children": null,
+                      "id": "1_1",
+                      "type": "FILE",
+                      "url": "aliqua et temp",
+                      "parentId": "1"
+                    },
+                    {
+                      "date": "2022-05-28T21:12:01Z",
+                      "size": 2,
+                      "children": null,
+                      "id": "1_2",
+                      "type": "FILE",
+                      "url": "aliqua et temp",
+                      "parentId": "1"
+                    },
+                    {
+                      "date": "2022-05-28T21:12:01Z",
+                      "size": 7,
+                      "children": [
+                        {
+                          "date": "2022-05-28T21:12:01Z",
+                          "size": 3,
+                          "children": null,
+                          "id": "1_3_1",
+                          "type": "FILE",
+                          "url": "aliqua et temp",
+                          "parentId": "1_3"
+                        },
+                        {
+                          "date": "2022-05-28T21:12:01Z",
+                          "size": 4,
+                          "children": null,
+                          "id": "1_3_2",
+                          "type": "FILE",
+                          "url": "aliqua et temp",
+                          "parentId": "1_3"
+                        }
+                      ],
+                      "id": "1_3",
+                      "type": "FOLDER",
+                      "url": null,
+                      "parentId": "1"
+                    },
+                    {
+                      "date": "2022-05-28T21:12:01Z",
+                      "size": 0,
+                      "children": [],
+                      "id": "1_4",
+                      "type": "FOLDER",
+                      "url": null,
+                      "parentId": "1"
+                    }
+                  ],
+                  "id": "1",
+                  "type": "FOLDER",
+                  "url": null,
+                  "parentId": null
+                }
+                """;
         this.mockMvc.perform(
                 MockMvcRequestBuilders.post("/imports")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -60,52 +139,52 @@ class NodesApiDelegateImplTest {
                                   {
                                   "items": [
                                     {
-                                      "id": "элемент_1",
+                                      "id": "1",
                                       "type": "FOLDER",
                                       "url": null,
                                       "parentId": null,
                                       "size": null
                                     },
                                     {
-                                      "id": "элемент_1_1",
+                                      "id": "1_1",
                                       "type": "FILE",
                                       "url": "aliqua et temp",
-                                      "parentId": "элемент_1",
+                                      "parentId": "1",
                                       "size": 1
                                     },
                                     {
-                                      "id": "элемент_1_2",
+                                      "id": "1_2",
                                       "type": "FILE",
                                       "url": "aliqua et temp",
-                                      "parentId": "элемент_1",
+                                      "parentId": "1",
                                       "size": 2
                                     },
                                     {
-                                      "id": "элемент_1_3",
+                                      "id": "1_3",
                                       "type": "FOLDER",
                                       "url": null,
-                                      "parentId": "элемент_1",
+                                      "parentId": "1",
                                       "size": null
                                     },
                                     {
-                                      "id": "элемент_1_3_1",
+                                      "id": "1_3_1",
                                       "type": "FILE",
                                       "url": "aliqua et temp",
-                                      "parentId": "элемент_1_3",
+                                      "parentId": "1_3",
                                       "size": 3
                                     },
                                     {
-                                      "id": "элемент_1_3_2",
+                                      "id": "1_3_2",
                                       "type": "FILE",
                                       "url": "aliqua et temp",
-                                      "parentId": "элемент_1_3",
+                                      "parentId": "1_3",
                                       "size": 4
                                     },
                                     {
-                                      "id": "элемент_1_4",
+                                      "id": "1_4",
                                       "type": "FOLDER",
                                       "url": null,
-                                      "parentId": "элемент_1",
+                                      "parentId": "1",
                                       "size": null
                                     }
                                   ],
@@ -115,16 +194,16 @@ class NodesApiDelegateImplTest {
         ).andExpect(status().isOk());
 
         MvcResult result = this.mockMvc.perform(
-                MockMvcRequestBuilders.get("/nodes/элемент_1")
-        ).andExpect(status().isOk()).andReturn();
-        JSONObject json = new JSONObject(result.getResponse().getContentAsString());
-        System.out.println(json.toString(4));
+                MockMvcRequestBuilders.get("/nodes/1")
+        ).andExpect(status().isOk()).andExpect(content().json(response_json)).andReturn();
+//        JSONObject json = new JSONObject(result.getResponse().getContentAsString());
+//        System.out.println(json.toString(4));
     }
 
     @Test
     public void notFound() throws Exception {
         this.mockMvc.perform(
-                MockMvcRequestBuilders.get("/nodes/элемент_1")
+                MockMvcRequestBuilders.get("/nodes/1")
         ).andExpect(status().isNotFound()).andExpect(content().json(NOT_FOUND));
     }
 

@@ -43,7 +43,7 @@ public class ItemMapperImpl implements ItemMapper {
                 .date(entity.getDate().atOffset(ZoneOffset.UTC))
                 .parentId(entity.getParentStringId())
                 .type(entity.getType())
-                .size(entity.getSize());
+                .size(entity.getSize() == null?0:entity.getSize());
         // Рекурсивное добавление потомков
         Set<Item> childrenItem = entity.getChildren();
         if (childrenItem == null || childrenItem.size() == 0) {
